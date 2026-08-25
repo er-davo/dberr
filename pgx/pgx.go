@@ -99,29 +99,17 @@ func (p *pgxDriver) Wrap(err error) error {
 	}
 
 	if errors.Is(err, pgx.ErrTxClosed) {
-		txErr := &dberr.TransactionError{
+		return &dberr.TransactionError{
 			Type: dberr.TransactionClosed,
 			Err:  err,
 		}
-
-		return makeErr(
-			"transaction is closed",
-			"tx_closed",
-			errors.Join(txErr, dberr.ErrTransaction),
-		)
 	}
 
 	if errors.Is(err, pgx.ErrTxCommitRollback) {
-		txErr := &dberr.TransactionError{
+		return &dberr.TransactionError{
 			Type: dberr.TransactionAborted,
 			Err:  err,
 		}
-
-		return makeErr(
-			"transaction was rolled back",
-			"tx_commit_rollback",
-			errors.Join(txErr, dberr.ErrTransaction),
-		)
 	}
 
 	var pgErr *pgconn.PgError
