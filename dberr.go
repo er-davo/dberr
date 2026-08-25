@@ -7,6 +7,9 @@ type Driver interface {
 var driver Driver
 
 func Wrap(err error) error {
+	if err == nil {
+		return nil
+	}
 	return driver.Wrap(err)
 }
 
